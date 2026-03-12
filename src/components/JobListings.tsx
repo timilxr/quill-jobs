@@ -5,7 +5,7 @@ import Spinner from './Spinner';
 
 const JobListings = ({ isHome = false }: { isHome?: boolean }) => {
     const [jobs, setJobs] = useState<IJob[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchJobs = async () => {
