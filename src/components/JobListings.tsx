@@ -1,9 +1,27 @@
-import React from 'react'
-import jobs from '../jobs.json'
+import React, { useEffect, useState } from 'react'
 import JobListing from './JobListing'
+import type { IJob } from '../util/models';
 
-const JobListings = ({isHome=false}: {isHome?: boolean}) => {
-    const jobsList = isHome ? jobs.slice(0, 3) : jobs;
+const JobListings = ({ isHome = false }: { isHome?: boolean }) => {
+    const [jobs, setJobs] = useState<IJob[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    useEffect(() => {
+        const fetchJobs = async () => {
+            setLoading(true);
+            try {
+                const res = await fetch('http://localhost:8000/jobs');
+                const data = await res.json();
+                setJobs(data);
+            } catch (error) {
+                console.error('Error fetching Jobs', error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchJobs();
+    }, [])
     return (
         <section className="bg-blue-50 px-4 py-10">
             <div className="container-xl lg:container m-auto">
@@ -13,9 +31,12 @@ const JobListings = ({isHome=false}: {isHome?: boolean}) => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* <!-- Job Listing 1 --> */}
                     {
-                        jobsList.map(job => (
-                            <JobListing key={job.id} job={job} />
-                        ))
+                        loading ?
+                            <h1>Loading...</h1>
+                            :
+                            jobs.map(job => (
+                                <JobListing key={job.id} job={job} />
+                            ))
                     }
                 </div>
             </div>
