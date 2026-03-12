@@ -1,34 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React from 'react'
+import { useLoaderData } from 'react-router-dom'
 import type { IJob } from '../util/models';
-import Spinner from '../components/Spinner';
 
 const JobPage = () => {
-    const { id } = useParams();
-    const [job, setJob] = useState<IJob|null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
+    const job: IJob = useLoaderData();
 
-    useEffect(() => {
-        const fetchJob = async () => {
-            const url = `/api/jobs/${id}`;
-            setLoading(true);
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                setJob(data);
-            } catch (error) {
-                console.error('Error fetching Job', error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchJob();
-    }, []);
-
-    return loading ? <Spinner loading={loading} /> : (
+    return (
         <div><h1>{job?.title}</h1></div>
     )
 }
 
-export default JobPage
+const jobLoader = async ({ params }) => {
+    const res = await fetch(`/api/jobs/${params.id}`);
+    const data = await res.json();
+    return data;
+}
+
+export {JobPage as default, jobLoader}
