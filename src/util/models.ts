@@ -5,4 +5,10 @@ export interface IJob {
     type: string;
     salary: string;
     location: string;
+    company: {
+        name: string;
+        description: string;
+        contactEmail: string;
+        contactPhone: string;
+    }
 }
