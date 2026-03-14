@@ -12,3 +12,5 @@ export interface IJob {
         contactPhone: string;
     }
 }
+
+export type JobFormData = Partial<Omit<IJob, 'company'>> & { company?: Partial<IJob['company']> };

@@ -1,10 +1,21 @@
 import React from 'react'
-import { Link, useLoaderData } from 'react-router-dom'
+import { Link, useLoaderData, useNavigate } from 'react-router-dom'
 import type { IJob } from '../util/models';
 import { FaArrowLeft, FaMapMarker } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
-const JobPage = () => {
+const JobPage = ({deleteJob}: {deleteJob: (jobId: string) => Promise<void>}) => {
+    const navigate = useNavigate();
     const job: IJob = useLoaderData();
+
+    const deleteCurrentJob = async () => {
+        const confirmDelete = globalThis.confirm('Are you sure you want to delete this job?');
+        if (!confirmDelete) return;
+
+        await deleteJob(job.id);
+        toast('Job deleted successfully!');
+        navigate('/jobs');
+    }
 
     return (
         <>
@@ -88,6 +99,8 @@ const JobPage = () => {
                                 </Link>
                                 <button
                                     className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block"
+                                    onClick={deleteCurrentJob}
+                                    type='button'
                                 >
                                     Delete Job
                                 </button>
@@ -100,10 +113,4 @@ const JobPage = () => {
     )
 }
 
-const jobLoader = async ({ params }) => {
-    const res = await fetch(`/api/jobs/${params.id}`);
-    const data = await res.json();
-    return data;
-}
-
-export { JobPage as default, jobLoader }
+export default JobPage;
